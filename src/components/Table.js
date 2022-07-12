@@ -8,10 +8,16 @@ const tableTitles = [
 ];
 
 export default function Table() {
-  const { data, getTableData } = useContext(TableContext);
+  const { data, filters, getTableData } = useContext(TableContext);
+
   useEffect(() => {
     getTableData();
   }, [getTableData]);
+
+  const dataFiltered = data.filter(({ name }) => (
+    name.includes(filters.filterByName.name)
+  ));
+
   return (
     <table>
       <thead>
@@ -21,7 +27,7 @@ export default function Table() {
       </thead>
       <tbody>
         {
-          data.map(({
+          dataFiltered.map(({
             name,
             rotation_period: rotationPeriod,
             orbital_period: orbitalPeriod,
