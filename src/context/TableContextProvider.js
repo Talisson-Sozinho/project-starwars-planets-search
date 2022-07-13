@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import TableContext from './TableContext';
 
@@ -8,21 +8,25 @@ function TableContextProvider({ children }) {
     filterByName: {
       name: '',
     },
+    filterByNumericValues: [],
   });
 
-  async function getTableData() {
-    try {
-      const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
-      const { results } = await response.json();
-      const dataProcessed = results.map((planet) => {
-        delete planet.residents;
-        return planet;
-      });
-      setData(dataProcessed);
-    } catch (e) {
-      console.log(e);
+  useEffect(() => {
+    async function getTableData() {
+      try {
+        const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
+        const { results } = await response.json();
+        const dataProcessed = results.map((planet) => {
+          delete planet.residents;
+          return planet;
+        });
+        setData(dataProcessed);
+      } catch (e) {
+        console.log(e);
+      }
     }
-  }
+    getTableData();
+  }, []);
 
   function setFilterByName(name) {
     setFilters({
@@ -33,8 +37,27 @@ function TableContextProvider({ children }) {
     });
   }
 
+  function applyFilterByNumericValues(numericFilterInputs) {
+    setFilters({
+      ...filters,
+      filterByNumericValues: [
+        ...filters.filterByNumericValues,
+        {
+          ...numericFilterInputs,
+        },
+      ],
+    });
+  }
+
   return (
-    <TableContext.Provider value={ { data, filters, getTableData, setFilterByName } }>
+    <TableContext.Provider
+      value={ {
+        data,
+        filters,
+        setFilterByName,
+        applyFilterByNumericValues,
+      } }
+    >
       {children}
     </TableContext.Provider>
   );

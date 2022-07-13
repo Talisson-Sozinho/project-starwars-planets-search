@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import TableContext from '../context/TableContext';
 
 const tableTitles = [
@@ -8,15 +8,31 @@ const tableTitles = [
 ];
 
 export default function Table() {
-  const { data, filters, getTableData } = useContext(TableContext);
+  const {
+    data,
+    filters: {
+      filterByName,
+      filterByNumericValues,
+    },
+  } = useContext(TableContext);
 
-  useEffect(() => {
-    getTableData();
-  }, [getTableData]);
-
-  const dataFiltered = data.filter(({ name }) => (
-    name.includes(filters.filterByName.name)
-  ));
+  const dataFiltered = data.filter((planet) => {
+    if (planet.name.includes(filterByName.name)) {
+      if (filterByNumericValues.length > 0) {
+        return filterByNumericValues.every(({ column, value, comparison }) => {
+          if (comparison === 'maior que' && +planet[column] > +value) {
+            return true;
+          }
+          if (comparison === 'menor que' && +planet[column] < +value) {
+            return true;
+          }
+          return comparison === 'igual a' && +planet[column] === +value;
+        });
+      }
+      return true;
+    }
+    return false;
+  });
 
   return (
     <table>
