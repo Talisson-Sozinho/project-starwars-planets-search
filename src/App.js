@@ -7,7 +7,7 @@ import TableContextProvider from './context/TableContextProvider';
 function App() {
   return (
     <TableContextProvider>
-      <span>Star Wars Planets</span>
+      <h1>Star Wars Planets</h1>
       <Filter />
       <Table />
     </TableContextProvider>

@@ -49,6 +49,22 @@ function TableContextProvider({ children }) {
     });
   }
 
+  function removeFilter(columnForRemove) {
+    setFilters({
+      ...filters,
+      filterByNumericValues: filters.filterByNumericValues.filter(
+        ({ column }) => columnForRemove !== column,
+      ),
+    });
+  }
+
+  function removeAllFilters() {
+    setFilters({
+      ...filters,
+      filterByNumericValues: [],
+    });
+  }
+
   return (
     <TableContext.Provider
       value={ {
@@ -56,6 +72,8 @@ function TableContextProvider({ children }) {
         filters,
         setFilterByName,
         applyFilterByNumericValues,
+        removeFilter,
+        removeAllFilters,
       } }
     >
       {children}
